@@ -191,10 +191,24 @@
         
         // 3D Tilt Effect
         const card = document.getElementById('card');
-        document.addEventListener('mousemove', (e) => {
-            const x = (window.innerWidth / 2 - e.pageX) / 25;
-            const y = (window.innerHeight / 2 - e.pageY) / 25;
-            card.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg)`;
+        const container = document.querySelector('.container');
+
+        // Smooth transition for mouse leave
+        container.addEventListener('mouseleave', () => {
+            card.style.transition = 'transform 0.5s ease';
+            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+        });
+
+        // Mouse move effect
+        container.addEventListener('mousemove', (e) => {
+            // Remove transition during movement for instant response, 
+            // but add a tiny bit of CSS smoothing if it feels jittery
+            card.style.transition = 'transform 0.1s ease-out'; 
+            
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            
+            card.style.transform = `perspective(1000px) rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
         });
 
     </script>
