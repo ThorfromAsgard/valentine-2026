@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberpunk Valentine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            color: #0ff;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #f0f;
+            box-shadow: 0 0 20px #f0f, inset 0 0 20px #f0f;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            width: 400px;
+            backdrop-filter: blur(5px);
+            transform: perspective(1000px) rotateX(0deg);
+            transition: transform 0.1s;
+            pointer-events: auto;
+        }
+
+        .glitch {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 2px 2px 0px #f0f, -2px -2px 0px #0ff;
+            animation: glitch 1s infinite linear alternate-reverse;
+            margin-bottom: 20px;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px 0px #f0f, -2px -2px 0px #0ff; }
+            25% { text-shadow: -2px 2px 0px #f0f, 2px -2px 0px #0ff; }
+            50% { text-shadow: 2px -2px 0px #f0f, -2px 2px 0px #0ff; }
+            75% { text-shadow: -2px -2px 0px #f0f, 2px 2px 0px #0ff; }
+            100% { text-shadow: 2px 0px 0px #f0f, -2px 0px 0px #0ff; }
+        }
+
+        .image-container {
+            width: 100%;
+            height: 300px;
+            background-color: #111;
+            border: 1px solid #0ff;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.2) brightness(1.1);
+        }
+
+        .message {
+            font-size: 1.2em;
+            color: #fff;
+            text-shadow: 0 0 5px #fff;
+            line-height: 1.5;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #555;
+        }
+        
+        .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid #0ff;
+            color: #0ff;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 0 10px #0ff;
+            transition: 0.3s;
+        }
+        
+        .btn:hover {
+            background: #0ff;
+            color: #000;
+            box-shadow: 0 0 20px #0ff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="container">
+        <div class="card" id="card">
+            <div class="glitch" data-text="HAPPY VALENTINE'S">HAPPY VALENTINE'S</div>
+            
+            <div class="image-container">
+                <!-- Placeholder image until AI generates the real one -->
+                <img src="cyberpunk_lovers.png" alt="Cyberpunk City" id="hero-image">
+            </div>
+
+            <div class="message">
+                In a world of algorithms,<br>
+                you are my only constant.<br>
+                <br>
+                <span style="font-size: 1.5em; color: #f0f; text-shadow: 0 0 10px #f0f;">To My Player 2</span>
+            </div>
+            
+            <button class="btn" onclick="toggleMusic()">[ PLAY AUDIO ]</button>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain / Cyberpunk Rain Effect
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0'; // Green matrix text, can change to #f0f for pink/purple
+            ctx.fillStyle = Math.random() > 0.5 ? '#0ff' : '#f0f'; // Cyberpunk cyan/magenta
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < columns; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // 3D Tilt Effect
+        const card = document.getElementById('card');
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.pageX) / 25;
+            const y = (window.innerHeight / 2 - e.pageY) / 25;
+            card.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg)`;
+        });
+
+    </script>
+</body>
+</html>
