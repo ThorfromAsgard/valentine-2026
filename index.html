@@ -192,24 +192,44 @@
         // 3D Tilt Effect
         const card = document.getElementById('card');
         const container = document.querySelector('.container');
-
-        // Smooth transition for mouse leave
-        container.addEventListener('mouseleave', () => {
-            card.style.transition = 'transform 0.5s ease';
-            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-        });
-
-        // Mouse move effect
+        
+        let mouseX = 0;
+        let mouseY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        
+        // Settings
+        const smoothness = 0.1; // Lower = smoother/slower, Higher = snappier
+        
         container.addEventListener('mousemove', (e) => {
-            // Remove transition during movement for instant response, 
-            // but add a tiny bit of CSS smoothing if it feels jittery
-            card.style.transition = 'transform 0.1s ease-out'; 
-            
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-            
-            card.style.transform = `perspective(1000px) rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            // Calculate target rotation based on mouse position relative to center
+            mouseX = (window.innerWidth / 2 - e.pageX) / 25;
+            mouseY = (window.innerHeight / 2 - e.pageY) / 25;
         });
+        
+        container.addEventListener('mouseleave', () => {
+            // Reset to center on leave
+            mouseX = 0;
+            mouseY = 0;
+        });
+
+        function animate() {
+            // Linear interpolation (Lerp) for smooth movement
+            currentX = currentX + (mouseX - currentX) * smoothness;
+            currentY = currentY + (mouseY - currentY) * smoothness;
+            
+            // Apply transform
+            // Note: rotateY corresponds to X-axis movement, rotateX to Y-axis movement
+            card.style.transform = `perspective(1000px) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Remove CSS transition interference for mouse movement
+        card.style.transition = 'none';
+        
+        // Start animation loop
+        animate();
 
     </script>
 </body>
